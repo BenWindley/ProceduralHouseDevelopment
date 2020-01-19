@@ -4,32 +4,38 @@ using UnityEngine;
 
 public class MapDrawer : MonoBehaviour
 {
+    private Manager m_manager;
+
     public LineRenderer m_line;
-    public List<Vector3> m_corners;
-    public bool updateLine = true;
+    public float m_lineWidth = 0.1f;
+    public List<Vector3> m_edges;
+    public bool m_updateLine = true;
+
+    private void Start()
+    {
+        m_manager = Camera.main.GetComponent<Manager>();
+        m_line.widthMultiplier = m_lineWidth;        
+    }
 
     void Update()
     {
-        if (!updateLine)
+        if (!m_updateLine)
             return;
 
         if(Input.GetKeyDown(KeyCode.Return))
         {
             if (m_line.positionCount >= 3)
             {
-                Debug.Log("Completed zone");
-
-                updateLine = false;
-                m_corners.Clear();
+                m_updateLine = false;
+                m_edges.Clear();
                 m_line.positionCount--;
 
                 for (int i = 0; i < Mathf.Max(m_line.positionCount, 4); ++i)
                 {
-                    m_corners.Add(m_line.GetPosition(i));
+                    m_edges.Add(m_line.GetPosition(i) * Vector2.one);
                 }
 
                 GetComponent<Manager>().NextSection();
-                GetComponent<EdgeSelector>().m_areaPoints = m_corners;
             }
         }
         else if(Input.GetMouseButtonDown(0))
@@ -46,7 +52,8 @@ public class MapDrawer : MonoBehaviour
         }
         else if(Input.GetMouseButtonDown(1))
         {
-            m_line.positionCount--;
+            if(m_line.positionCount > 1)
+                m_line.positionCount--;
         }
         else
         {

@@ -273,7 +273,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.2
+    widthMultiplier: 1
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -318,9 +318,9 @@ LineRenderer:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 20
-    numCapVertices: 10
-    alignment: 0
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 1
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
@@ -334,11 +334,64 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989526317}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.128, z: -11.726359}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1149444066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1149444068}
+  - component: {fileID: 1149444067}
+  m_Layer: 0
+  m_Name: Map Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1149444067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149444066}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c37be3fd71d3a488e9325e1eb6e55b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_roadVisualiser: {fileID: 1736968940}
+  m_mainRoadEdgeBuffer: 0.05
+  m_roadEdgeAvoidance: 0.1
+  m_stepSize: 0.01
+  m_roads: []
+  m_initialRoad:
+    m_start: {x: 0, y: 0, z: 0}
+    m_end: {x: 0, y: 0, z: 0}
+  m_perpDir: 1
+--- !u!4 &1149444068
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149444066}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1736968939}
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1230572820
 GameObject:
@@ -439,8 +492,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_line: {fileID: 1487432375}
-  m_corners: []
-  updateLine: 1
+  m_lineWidth: 0.05
+  m_edges: []
+  m_updateLine: 1
 --- !u!114 &1230572825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,8 +507,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0749edef42fbf54479777803567cb0b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_areaPoints: []
   m_line: {fileID: 989526318}
+  m_mainRoad: []
+  m_lineWidth: 0.1
+  m_updateLine: 1
 --- !u!114 &1230572826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -469,7 +525,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_drawer: {fileID: 1230572824}
   m_edgeSelector: {fileID: 1230572825}
+  m_generator: {fileID: 1149444067}
   m_currentStage: 0
+  m_edges: []
+  m_mainRoad: []
 --- !u!1 &1487432374
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,7 +588,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 1
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -574,9 +633,9 @@ LineRenderer:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 20
-    numCapVertices: 10
-    alignment: 0
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 1
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
@@ -590,9 +649,55 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1487432374}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.128, z: -11.726359}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1736968938
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1736968939}
+  - component: {fileID: 1736968940}
+  m_Layer: 0
+  m_Name: Road Visualiser
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1736968939
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736968938}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1149444068}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1736968940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736968938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a900ca81adfd00409c8e3b851497c0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_roads: []
+  m_roadPrefab: {fileID: 5717841501045306367, guid: b231de06158aea246874943abee4dd2c,
+    type: 3}
