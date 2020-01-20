@@ -7,6 +7,7 @@ public class EdgeSelector : MonoBehaviour
     private Manager m_manager;
 
     public LineRenderer m_line;
+    public int m_mainRoadIndex;
     public List<Vector3> m_mainRoad = new List<Vector3>();
     public float m_lineWidth = 0.1f;
     public bool m_updateLine = true;
@@ -56,6 +57,8 @@ public class EdgeSelector : MonoBehaviour
             m_mainRoad.Clear();
             m_mainRoad.Add(m_manager.m_edges[closestIndex]);
             m_mainRoad.Add(m_manager.m_edges[(closestIndex + 1) % m_manager.m_edges.Count]);
+
+            m_mainRoadIndex = closestIndex;
 
             m_manager.NextSection();
         }

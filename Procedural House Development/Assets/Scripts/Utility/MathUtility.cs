@@ -40,6 +40,40 @@ public class MathUtility
 		return linePoint + lineDir * d;
 	}
 
+	public static float NearestDistanceToLineSegment(Vector3 p1, Vector3 p2, Vector3 point)
+	{
+		Vector3 nearestPoint = NearestPointToLine(p1, (p2 - p1).normalized, point);
+		float invLerp = InverseLerp(p1, p2, nearestPoint);
+
+		if (invLerp < 0)
+			return Vector3.Distance(p1, point);
+		if (invLerp > 1)
+			return Vector3.Distance(p2, point);
+
+		return Vector3.Distance(nearestPoint, point);
+	}
+
+	public static bool PointOnLineSegment(Vector3 p1, Vector3 p2, Vector3 point)
+	{
+		Vector3 lineVec = p2 - p1;
+		Vector3 pointVec = point - p1;
+
+		float dot = Vector3.Dot(pointVec, lineVec);
+
+		if (dot > 0)
+			if (pointVec.magnitude <= lineVec.magnitude)
+				return true;
+
+		return false;
+	}
+
+	public static float InverseLerp(Vector3 a, Vector3 b, Vector3 value)
+	{
+		Vector3 AB = b - a;
+		Vector3 AV = value - a;
+		return Vector3.Dot(AV, AB) / Vector3.Dot(AB, AB);
+	}
+
 	/// <summary>
 	/// Get the perpendicular direction to the lineDir using the left-hand rule
 	/// </summary>

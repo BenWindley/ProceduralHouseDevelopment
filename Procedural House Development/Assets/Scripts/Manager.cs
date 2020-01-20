@@ -29,6 +29,8 @@ public class Manager : MonoBehaviour
                 m_edgeSelector.enabled = false;
                 m_edgeSelector.m_line.enabled = false;
                 m_generator.enabled = true;
+
+                m_generator.m_mainRoadIndex = m_edgeSelector.m_mainRoadIndex;
                 m_mainRoad = m_edgeSelector.m_mainRoad;
                 m_generator.Generate();
                 break;

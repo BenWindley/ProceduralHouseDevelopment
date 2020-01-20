@@ -370,14 +370,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_roadVisualiser: {fileID: 1736968940}
-  m_mainRoadEdgeBuffer: 0.05
-  m_roadEdgeAvoidance: 0.1
-  m_stepSize: 0.01
-  m_roads: []
-  m_initialRoad:
-    m_start: {x: 0, y: 0, z: 0}
-    m_end: {x: 0, y: 0, z: 0}
-  m_perpDir: 1
+  m_roadEdgeAvoidance: 0.5
+  m_minimumRoadLength: 0.5
+  m_roadStepSize: 0.25
+  m_mainRoadIndex: 0
+  m_initialNode:
+    m_left: 0
+    m_totalValue: 0
+    m_depth: 0
+    m_children: []
+    m_roads: []
+    m_edges: []
+  m_maxDepth: 10
+  m_perpDirLeft: 1
 --- !u!4 &1149444068
 Transform:
   m_ObjectHideFlags: 0
@@ -508,6 +513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_line: {fileID: 989526318}
+  m_mainRoadIndex: 0
   m_mainRoad: []
   m_lineWidth: 0.1
   m_updateLine: 1
