@@ -48,8 +48,6 @@ public class Node
 
     private void FillSide(float stepSize, float minRoadLength, float roadEdgeAvoidance, bool left = true)
     {
-        const float epsilon = 1e-10F;
-
         for(int pi = 0; pi < m_roads.Count; ++pi)
         {
             if (m_depth > 0 && pi == 0) continue; 
@@ -97,7 +95,6 @@ public class Node
                     start, end, o.m_start, o.m_end, out tempEnd))
                     {
                         end = tempEnd;
-                        end -= Vector2.one * dir * roadEdgeAvoidance;
 
                         clear = true;
                     }
