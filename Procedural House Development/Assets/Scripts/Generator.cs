@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -34,19 +33,19 @@ public class Node
     public List<Road> m_roads = new List<Road>();
     public List<Road> m_edges = new List<Road>();
 
-    public void FillChildren(float stepSize, float minRoadLength, float roadEdgeAvoidance, int maxDepth)
+    public void FillChildren(float roadIntervals, int maxDepth)
     {
         if (m_depth >= maxDepth)
             return;
 
-        FillSide(stepSize, minRoadLength, roadEdgeAvoidance, true);
-        FillSide(stepSize, minRoadLength, roadEdgeAvoidance, false);
+        FillSide(roadIntervals, true);
+        FillSide(roadIntervals, false);
 
         foreach (Node c in m_children)
-            c.FillChildren(stepSize, minRoadLength, roadEdgeAvoidance, maxDepth);
+            c.FillChildren(roadIntervals, maxDepth);
     }
 
-    private void FillSide(float stepSize, float minRoadLength, float roadEdgeAvoidance, bool left = true)
+    private void FillSide(float roadIntervals, bool left = true)
     {
         for(int pi = 0; pi < m_roads.Count; ++pi)
         {
@@ -57,11 +56,13 @@ public class Node
 
             Vector3 dir = MathUtility.Perpendicular((p.m_end - p.m_start).normalized) * (left ? 1 : -1);
 
-            for (int i = 0; i <= 1.0f / stepSize; ++i)
+            int segments = Mathf.RoundToInt(p.Length() / roadIntervals);
+
+            for (int i = 0; i <= segments; ++i)
             {
                 if (pi == 1 && i == 0) continue;
 
-                Vector2 start = Vector3.Lerp(p.m_start, p.m_end, i * stepSize);
+                Vector2 start = p.m_start + (p.m_end - p.m_start).normalized * roadIntervals * i;
                 Vector2 end = start + Vector2.one * dir * 100;
                 Vector2 tempEnd = end;
 
@@ -74,7 +75,7 @@ public class Node
                     start, end, o.m_start, o.m_end, out tempEnd))
                     {
                         end = tempEnd;
-                        end -= Vector2.one * dir * roadEdgeAvoidance;
+                        end -= Vector2.one * dir * (Vector2.Distance(start, end) % roadIntervals);
 
                         clear = true;
                     }
@@ -120,7 +121,7 @@ public class Node
                         clear = false;
                 }
 
-                if (clear && Vector2.Distance(start, end) > minRoadLength)
+                if (clear && Vector2.Distance(start, end) > roadIntervals)
                 {
                     Node c = new Node();
 
@@ -176,9 +177,7 @@ public class Generator : MonoBehaviour
     public RoadVisualiser m_roadVisualiser;
 
     // Buffer between the edges of the main road, between 0 for no buffer and 0.5 for only center
-    public float m_roadEdgeAvoidance = 0.05f;
-    public float m_minimumRoadLength = 0.1f;
-    public float m_roadStepSize = 0.05f;
+    public float m_roadIntervals = 0.05f;
 
     public int m_mainRoadIndex;
 
@@ -217,7 +216,7 @@ public class Generator : MonoBehaviour
             m_manager.m_mainRoad[1]));
         m_initialNode.m_edges = avoid;
 
-        m_initialNode.FillChildren(m_roadStepSize, m_minimumRoadLength, m_roadEdgeAvoidance, m_maxDepth);
+        m_initialNode.FillChildren(m_roadIntervals, m_maxDepth);
 
         Node longest = m_initialNode.GetMostValuableNode();
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
