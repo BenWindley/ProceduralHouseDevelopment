@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class Road
@@ -134,7 +135,7 @@ public class Node
                     // TODO Add value based on lower longest road length
                     c.m_totalValue = m_totalValue + new Road(start, end).Length();
 
-                    if (c.m_totalValue > m_currentHighestValue)
+                    if (c.m_totalValue > m_currentHighestValue || m_depth == 1)
                     {
                         m_currentHighestValue = c.m_totalValue;
                         m_children.Add(c);
@@ -177,13 +178,13 @@ public class Generator : MonoBehaviour
     public RoadVisualiser m_roadVisualiser;
 
     // Buffer between the edges of the main road, between 0 for no buffer and 0.5 for only center
-    public float m_roadIntervals = 0.05f;
+    public float m_roadIntervals = 0.5f;
+    public Slider m_roadIntervalsSlider;
 
     public int m_mainRoadIndex;
 
-    public Node m_initialNode = new Node();
-
     public int m_maxDepth = 5;
+    public Slider m_maxDepthSlider;
 
     public bool m_perpDirLeft = true;
 
@@ -194,6 +195,12 @@ public class Generator : MonoBehaviour
 
     public void Generate()
     {
+        m_roadIntervals = m_roadIntervalsSlider.value;
+        m_maxDepth = Mathf.RoundToInt(m_maxDepthSlider.value);
+
+        m_roadVisualiser.Clear();
+        Node initialNode = new Node();
+
         List<Road> avoid = new List<Road>();
 
         for (int i = 0; i < m_manager.m_edges.Count; ++i)
@@ -208,24 +215,23 @@ public class Generator : MonoBehaviour
             MathUtility.Perpendicular((m_manager.m_mainRoad[1] - m_manager.m_mainRoad[0]).normalized * 100, true)
             );
          
-        m_initialNode.m_left = m_perpDirLeft;
-        Vector3 mrDir = (m_manager.m_mainRoad[1] - m_manager.m_mainRoad[0]).normalized;
+        initialNode.m_left = m_perpDirLeft;
 
-        m_initialNode.m_roads.Add(new Road(
+        initialNode.m_roads.Add(new Road(
             m_manager.m_mainRoad[0],
             m_manager.m_mainRoad[1]));
-        m_initialNode.m_edges = avoid;
+        initialNode.m_edges = avoid;
 
-        m_initialNode.FillChildren(m_roadIntervals, m_maxDepth);
+        initialNode.FillChildren(m_roadIntervals, m_maxDepth);
 
-        Node longest = m_initialNode.GetMostValuableNode();
+        Node longest = initialNode.GetMostValuableNode();
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
         m_roadVisualiser.GenerateRoads();
     }
 
     private bool CalculateDirectionOfPerpendicular(List<Road> edges, Vector2 point, Vector2 dir)
     {
-        Vector2 end = Vector2.zero;
+        Vector2 end;
 
         foreach (Road r in edges)
             if (MathUtility.LineSegmentLineSegmentIntersection(point, dir, r.m_start, r.m_end, out end))

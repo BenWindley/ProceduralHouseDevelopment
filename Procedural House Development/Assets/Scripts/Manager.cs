@@ -8,6 +8,8 @@ public class Manager : MonoBehaviour
     public EdgeSelector m_edgeSelector;
     public Generator m_generator;
 
+    public PanelSlideIn m_generatorSettings;
+
     public int m_currentStage = 0;
 
     public List<Vector3> m_edges;
@@ -27,12 +29,12 @@ public class Manager : MonoBehaviour
                 break;
             case 2:
                 m_edgeSelector.enabled = false;
-                m_edgeSelector.m_line.enabled = false;
+                //m_edgeSelector.m_line.enabled = false;
                 m_generator.enabled = true;
 
                 m_generator.m_mainRoadIndex = m_edgeSelector.m_mainRoadIndex;
                 m_mainRoad = m_edgeSelector.m_mainRoad;
-                m_generator.Generate();
+                m_generatorSettings.m_enabled = true;
                 break;
         }
     }
