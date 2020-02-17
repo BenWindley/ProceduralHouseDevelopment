@@ -27,14 +27,18 @@ public class Manager : MonoBehaviour
 
                 m_edges = m_drawer.m_edges;
                 break;
+
             case 2:
                 m_edgeSelector.enabled = false;
-                //m_edgeSelector.m_line.enabled = false;
                 m_generator.enabled = true;
 
                 m_generator.m_mainRoadIndex = m_edgeSelector.m_mainRoadIndex;
                 m_mainRoad = m_edgeSelector.m_mainRoad;
                 m_generatorSettings.m_enabled = true;
+                break;
+
+            case 3:
+                m_edgeSelector.m_line.enabled = false;
                 break;
         }
     }

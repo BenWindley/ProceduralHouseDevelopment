@@ -1387,7 +1387,10 @@ MonoBehaviour:
   m_roadIntervals: 0.5
   m_roadIntervalsSlider: {fileID: 1860966220}
   m_mainRoadIndex: 0
-  m_maxDepth: 6
+  m_houseWidth: 0.2
+  m_houseHeight: 0.3
+  m_houseOffset: 0.1
+  m_maxDepth: 0
   m_maxDepthSlider: {fileID: 395903288}
   m_perpDirLeft: 1
 --- !u!4 &1149444068
@@ -2191,6 +2194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_roads: []
+  m_houses: []
   m_roadPrefab: {fileID: 5717841501045306367, guid: b231de06158aea246874943abee4dd2c,
     type: 3}
 --- !u!1 &1792166178
@@ -2263,7 +2267,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 2
 --- !u!222 &1792166181
 CanvasRenderer:
   m_ObjectHideFlags: 0

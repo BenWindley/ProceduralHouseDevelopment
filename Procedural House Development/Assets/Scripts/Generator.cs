@@ -21,8 +21,32 @@ public class Road
 }
 
 [System.Serializable]
+public class House
+{
+    public Vector2 p1, p2, p3, p4;
+
+    public bool CheckHouseIntersection(House house)
+    {
+        return  MathUtility.PointInQuad(house.p1, p1, p2, p3, p4) ||
+                MathUtility.PointInQuad(house.p2, p1, p2, p3, p4) ||
+                MathUtility.PointInQuad(house.p3, p1, p2, p3, p4) ||
+                MathUtility.PointInQuad(house.p4, p1, p2, p3, p4);
+    }
+
+    public bool CheckRoadIntersection(Road road)
+    {
+        return  MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p1, p2) ||
+                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p2, p3) ||
+                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p3, p4) ||
+                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p4, p1);
+    }
+}
+
+[System.Serializable]
 public class Node
 {
+    public Generator m_generator;
+
     public bool m_left = true;
     private float m_currentHighestValue = 0.0f;
     public float m_totalValue = 0.0f;
@@ -33,6 +57,8 @@ public class Node
 
     public List<Road> m_roads = new List<Road>();
     public List<Road> m_edges = new List<Road>();
+
+    public List<House> m_houses = new List<House>();
 
     public void FillChildren(float roadIntervals, int maxDepth)
     {
@@ -65,7 +91,7 @@ public class Node
 
                 Vector2 start = p.m_start + (p.m_end - p.m_start).normalized * roadIntervals * i;
                 Vector2 end = start + Vector2.one * dir * 100;
-                Vector2 tempEnd = end;
+                Vector2 tempEnd;
 
                 bool clear = false;
 
@@ -110,11 +136,13 @@ public class Node
                         continue;
 
                     // Invalid if both roads have the same start point
-                    if (Vector2.one * o.m_start == start ||
-                        Vector2.one * o.m_end == start ||
-                        Vector2.one * o.m_start == end ||
-                        Vector2.one * o.m_end == end)
+                    if ((Vector2.one * o.m_start == start &&
+                         Vector2.one * o.m_end == end   ) ||
+                        (Vector2.one * o.m_start == end &&
+                         Vector2.one * o.m_end == start   ))
+                    {
                         clear = false;
+                    }
 
                     // Invalid if line is inside another line
                     if (MathUtility.PointOnLineSegment(o.m_start, o.m_end, start) &&
@@ -126,10 +154,12 @@ public class Node
                 {
                     Node c = new Node();
 
+                    c.m_generator = m_generator;
                     c.m_parent = this;
                     c.m_roads = new List<Road>(m_roads);
                     c.m_roads.Add(new Road(start, end));
                     c.m_edges = m_edges;
+                    c.FillBuildings();
                     c.m_depth = m_depth + 1;
 
                     // TODO Add value based on lower longest road length
@@ -140,6 +170,56 @@ public class Node
                         m_currentHighestValue = c.m_totalValue;
                         m_children.Add(c);
                     }
+                }
+            }
+        }
+    }
+
+    public void FillBuildings()
+    {
+        m_houses.Clear();
+
+        // Remove new 
+        foreach(House h in m_houses)
+            foreach(Road r in m_roads)
+                if (h.CheckRoadIntersection(r))
+                    m_houses.Remove(h);
+
+        for (int j = 1; j < m_roads.Count; ++j)
+        {
+            Road r = m_roads[j];
+
+            int segments = Mathf.RoundToInt((r.Length() - m_generator.m_houseHeight) / (m_generator.m_houseWidth + m_generator.m_houseOffset));
+
+            Vector2 ver = MathUtility.Perpendicular((r.m_end - r.m_start).normalized) * (m_generator.m_perpDirLeft ? 1 : -1);
+            Vector2 hor = (r.m_end - r.m_start).normalized;
+
+            for (int dir = 0; dir < 2; ++dir)
+            {
+                ver *= dir == 0 ? 1 : -1;
+
+                for (int i = 0; i < segments; ++i)
+                {
+                    Vector2 start = Vector2.one * r.m_start + hor * m_generator.m_houseHeight + hor * (m_generator.m_houseWidth + m_generator.m_houseOffset) * i;
+
+                    House house = new House();
+
+                    house.p1 = start + ver * m_generator.m_houseOffset;
+                    house.p2 = house.p1 + ver * m_generator.m_houseHeight;
+                    house.p3 = house.p2 + hor * m_generator.m_houseWidth;
+                    house.p4 = house.p1 + hor * m_generator.m_houseWidth;
+
+                    bool valid = true;
+
+                    //foreach (Road rTest in m_roads)
+                    //    if (!house.CheckRoadIntersection(rTest))
+                    //        valid = false;
+                    //foreach (House hTest in m_houses)
+                    //    if (!house.CheckHouseIntersection(hTest))
+                    //        valid = false;
+
+                    if (valid)
+                        m_houses.Add(house);
                 }
             }
         }
@@ -183,6 +263,10 @@ public class Generator : MonoBehaviour
 
     public int m_mainRoadIndex;
 
+    public float m_houseWidth;
+    public float m_houseHeight;
+    public float m_houseOffset;
+
     public int m_maxDepth = 5;
     public Slider m_maxDepthSlider;
 
@@ -221,12 +305,15 @@ public class Generator : MonoBehaviour
             m_manager.m_mainRoad[0],
             m_manager.m_mainRoad[1]));
         initialNode.m_edges = avoid;
+        initialNode.m_generator = this;
 
         initialNode.FillChildren(m_roadIntervals, m_maxDepth);
 
         Node longest = initialNode.GetMostValuableNode();
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
+        m_roadVisualiser.m_houses.AddRange(longest.m_houses.ToArray());
         m_roadVisualiser.GenerateRoads();
+        m_manager.NextSection();
     }
 
     private bool CalculateDirectionOfPerpendicular(List<Road> edges, Vector2 point, Vector2 dir)
