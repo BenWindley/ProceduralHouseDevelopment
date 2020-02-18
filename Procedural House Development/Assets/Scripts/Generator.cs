@@ -60,21 +60,23 @@ public class Node
 
     public List<House> m_houses = new List<House>();
 
-    public void FillChildren(float roadIntervals, int maxDepth)
+    public void FillChildren(int maxDepth)
     {
         if (m_depth >= maxDepth)
             return;
 
-        FillSide(roadIntervals, true);
-        FillSide(roadIntervals, false);
+        FillSide(true);
+        FillSide(false);
 
         foreach (Node c in m_children)
-            c.FillChildren(roadIntervals, maxDepth);
+            c.FillChildren(maxDepth);
     }
 
-    private void FillSide(float roadIntervals, bool left = true)
+    private void FillSide(bool left = true)
     {
-        for(int pi = 0; pi < m_roads.Count; ++pi)
+        float roadIntervals = m_generator.m_houseHeight * 2 + m_generator.m_houseOffset * 3;
+
+        for (int pi = 0; pi < m_roads.Count; ++pi)
         {
             if (m_depth > 0 && pi == 0) continue; 
 
@@ -180,16 +182,18 @@ public class Node
         m_houses.Clear();
 
         // Remove new 
-        foreach(House h in m_houses)
-            foreach(Road r in m_roads)
-                if (h.CheckRoadIntersection(r))
-                    m_houses.Remove(h);
+        //foreach(House h in m_houses)
+        //    foreach(Road r in m_roads)
+        //        if (h.CheckRoadIntersection(r))
+        //            m_houses.Remove(h);
+
+        float startOffset = m_generator.m_houseHeight + m_generator.m_houseOffset * 2;
 
         for (int j = 1; j < m_roads.Count; ++j)
         {
             Road r = m_roads[j];
 
-            int segments = Mathf.RoundToInt((r.Length() - m_generator.m_houseHeight) / (m_generator.m_houseWidth + m_generator.m_houseOffset));
+            int segments = Mathf.FloorToInt((r.Length() - startOffset) / (m_generator.m_houseWidth + m_generator.m_houseOffset));
 
             Vector2 ver = MathUtility.Perpendicular((r.m_end - r.m_start).normalized) * (m_generator.m_perpDirLeft ? 1 : -1);
             Vector2 hor = (r.m_end - r.m_start).normalized;
@@ -200,7 +204,7 @@ public class Node
 
                 for (int i = 0; i < segments; ++i)
                 {
-                    Vector2 start = Vector2.one * r.m_start + hor * m_generator.m_houseHeight + hor * (m_generator.m_houseWidth + m_generator.m_houseOffset) * i;
+                    Vector2 start = Vector2.one * r.m_start + hor * startOffset + hor * (m_generator.m_houseWidth + m_generator.m_houseOffset) * i;
 
                     House house = new House();
 
@@ -258,12 +262,12 @@ public class Generator : MonoBehaviour
     public RoadVisualiser m_roadVisualiser;
 
     // Buffer between the edges of the main road, between 0 for no buffer and 0.5 for only center
-    public float m_roadIntervals = 0.5f;
-    public Slider m_roadIntervalsSlider;
 
     public int m_mainRoadIndex;
 
+    public Slider m_houseWidthSlider;
     public float m_houseWidth;
+    public Slider m_houseHeightSlider;
     public float m_houseHeight;
     public float m_houseOffset;
 
@@ -279,7 +283,9 @@ public class Generator : MonoBehaviour
 
     public void Generate()
     {
-        m_roadIntervals = m_roadIntervalsSlider.value;
+        m_houseWidth = m_houseWidthSlider.value;
+        m_houseHeight = m_houseHeightSlider.value;
+
         m_maxDepth = Mathf.RoundToInt(m_maxDepthSlider.value);
 
         m_roadVisualiser.Clear();
@@ -307,7 +313,7 @@ public class Generator : MonoBehaviour
         initialNode.m_edges = avoid;
         initialNode.m_generator = this;
 
-        initialNode.FillChildren(m_roadIntervals, m_maxDepth);
+        initialNode.FillChildren(m_maxDepth);
 
         Node longest = initialNode.GetMostValuableNode();
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
