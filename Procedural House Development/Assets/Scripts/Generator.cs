@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,6 +40,15 @@ public class House
                 MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p3, p4) ||
                 MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p4, p1);
     }
+
+    public bool CheckEdgeIntersection(List<Road> edges)
+    {
+        foreach (Road r in edges)
+            if (CheckRoadIntersection(r))
+                return true;
+
+        return false;
+    }
 }
 
 [System.Serializable]
@@ -61,7 +70,7 @@ public class Node
     public List<House> m_houses = new List<House>();
 
     public void FillChildren(int maxDepth)
-    {
+    { 
         if (m_depth >= maxDepth)
             return;
 
@@ -78,7 +87,7 @@ public class Node
 
         for (int pi = 0; pi < m_roads.Count; ++pi)
         {
-            if (m_depth > 0 && pi == 0) continue; 
+            if (m_depth > 0 && pi == 0) continue;
 
             // Current parent road
             Road p = m_roads[pi];
@@ -148,7 +157,7 @@ public class Node
 
                     // Invalid if line is inside another line
                     if (MathUtility.PointOnLineSegment(o.m_start, o.m_end, start) &&
-                       MathUtility.PointOnLineSegment(o.m_start, o.m_end, end))
+                        MathUtility.PointOnLineSegment(o.m_start, o.m_end, end))
                         clear = false;
                 }
 
@@ -164,8 +173,13 @@ public class Node
                     c.FillBuildings();
                     c.m_depth = m_depth + 1;
 
+                    float totalRoadLength = 0;
+
+                    foreach (Road rl in c.m_roads)
+                        totalRoadLength += rl.Length();
+
                     // TODO Add value based on lower longest road length
-                    c.m_totalValue = m_totalValue + new Road(start, end).Length();
+                    c.m_totalValue = m_houses.Count + totalRoadLength;
 
                     if (c.m_totalValue > m_currentHighestValue || m_depth == 1)
                     {
@@ -180,12 +194,6 @@ public class Node
     public void FillBuildings()
     {
         m_houses.Clear();
-
-        // Remove new 
-        //foreach(House h in m_houses)
-        //    foreach(Road r in m_roads)
-        //        if (h.CheckRoadIntersection(r))
-        //            m_houses.Remove(h);
 
         float startOffset = m_generator.m_houseHeight + m_generator.m_houseOffset * 2;
 
@@ -215,12 +223,14 @@ public class Node
 
                     bool valid = true;
 
-                    //foreach (Road rTest in m_roads)
-                    //    if (!house.CheckRoadIntersection(rTest))
-                    //        valid = false;
-                    //foreach (House hTest in m_houses)
-                    //    if (!house.CheckHouseIntersection(hTest))
-                    //        valid = false;
+                    foreach (Road rTest in m_roads)
+                        if (house.CheckRoadIntersection(rTest))
+                            valid = false;
+                    foreach (House hTest in m_houses)
+                        if (house.CheckHouseIntersection(hTest))
+                            valid = false;
+                    if (house.CheckEdgeIntersection(m_edges))
+                        valid = false;
 
                     if (valid)
                         m_houses.Add(house);

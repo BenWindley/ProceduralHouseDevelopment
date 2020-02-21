@@ -381,7 +381,7 @@ RectTransform:
   m_Children:
   - {fileID: 60078785}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1826,7 +1826,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1149444066
 GameObject:
@@ -1877,8 +1877,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1736968939}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1969,6 +1968,7 @@ GameObject:
   - component: {fileID: 1230572826}
   - component: {fileID: 1230572824}
   - component: {fileID: 1230572825}
+  - component: {fileID: 1230572827}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2093,6 +2093,20 @@ MonoBehaviour:
   m_currentStage: 0
   m_edges: []
   m_mainRoad: []
+--- !u!114 &1230572827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230572820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b072d9c7e4968914295f520b9bea391d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_moveSpeed: 1
+  m_zoomSpeed: 20
 --- !u!1 &1238969565
 GameObject:
   m_ObjectHideFlags: 0
@@ -2899,8 +2913,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1149444068}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1736968940
 MonoBehaviour:
@@ -2917,6 +2931,8 @@ MonoBehaviour:
   m_roads: []
   m_houses: []
   m_roadPrefab: {fileID: 5717841501045306367, guid: b231de06158aea246874943abee4dd2c,
+    type: 3}
+  m_housePrefab: {fileID: 5717841501045306367, guid: a27552af30df6464ea8966491188ba8f,
     type: 3}
 --- !u!1 &1792166178
 GameObject:
