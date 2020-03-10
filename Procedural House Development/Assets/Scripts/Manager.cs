@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
+    public GameObject m_prompt1;
+    public GameObject m_prompt2;
+    public GameObject m_prompt3;
+
     public MapDrawer m_drawer;
     public EdgeSelector m_edgeSelector;
     public Generator m_generator;
@@ -26,6 +30,10 @@ public class Manager : MonoBehaviour
                 m_edgeSelector.enabled = true;
 
                 m_edges = m_drawer.m_edges;
+
+                m_prompt1.SetActive(false);
+                m_prompt2.SetActive(true);
+                m_prompt3.SetActive(false);
                 break;
 
             case 2:
@@ -35,10 +43,18 @@ public class Manager : MonoBehaviour
                 m_generator.m_mainRoadIndex = m_edgeSelector.m_mainRoadIndex;
                 m_mainRoad = m_edgeSelector.m_mainRoad;
                 m_generatorSettings.m_enabled = true;
+
+                m_prompt1.SetActive(false);
+                m_prompt2.SetActive(false);
+                m_prompt3.SetActive(true);
                 break;
 
             case 3:
                 m_edgeSelector.m_line.enabled = false;
+
+                m_prompt1.SetActive(false);
+                m_prompt2.SetActive(false);
+                m_prompt3.SetActive(false);
                 break;
         }
     }
@@ -51,5 +67,15 @@ public class Manager : MonoBehaviour
     void Start()
     {
         m_drawer.enabled = true;
+        m_prompt1.SetActive(true);
+        m_prompt2.SetActive(false);
+        m_prompt3.SetActive(false);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+        if (Input.GetKeyDown(KeyCode.R))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

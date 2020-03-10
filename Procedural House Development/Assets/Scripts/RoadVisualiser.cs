@@ -36,10 +36,35 @@ public class RoadVisualiser : MonoBehaviour
             g.name = "House";
             LineRenderer gr = g.GetComponent<LineRenderer>();
 
-            gr.SetPosition(0, h.p1);
-            gr.SetPosition(1, h.p2);
-            gr.SetPosition(2, h.p3);
-            gr.SetPosition(3, h.p4);
+            gr.SetPosition(0, h.p[0]);
+            gr.SetPosition(1, h.p[1]);
+            gr.SetPosition(2, h.p[2]);
+            gr.SetPosition(3, h.p[3]);
+
+            switch (h.m_housingType)
+            {
+                case House.HouseType.Detatched:
+                    gr.startColor = new Color(0, 1, 1);
+                    gr.endColor = new Color(0, 1, 1);
+                    break;
+                case House.HouseType.SemiDetatched:
+                    gr.startColor = new Color(.5f, 1, 1);
+                    gr.endColor = new Color(.5f, 1, 1);
+                    break;
+                case House.HouseType.Terraced:
+                    gr.startColor = new Color(1, 1, 1);
+                    gr.endColor = new Color(1, 1, 1);
+                    break;
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        foreach (House h in m_houses)
+        {
+            Gizmos.DrawCube(h.m_checkPoint1, Vector3.one * 0.1f);
+            Gizmos.DrawCube(h.m_checkPoint2, Vector3.one * 0.1f);
         }
     }
 }

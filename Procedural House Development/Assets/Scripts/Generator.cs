@@ -23,22 +23,98 @@ public class Road
 [System.Serializable]
 public class House
 {
-    public Vector2 p1, p2, p3, p4;
+    public enum HouseType
+    {
+        Detatched,
+        SemiDetatched,
+        Terraced
+    }
+
+    public bool m_leftSideHouse;
+    public Vector2[] p = new Vector2[4];
+
+    public Vector2 m_checkPoint1;
+    public Vector2 m_checkPoint2;
+
+    public int i0 = -1;
+    public int i1 = -1;
+    public Vector2 avg0;
+    public Vector2 avg1;
+
+    public HouseType m_housingType;
+
+    public List<House> m_adjacentHouses = new List<House>();
+
+    public void JoinHouse(House h)
+    {
+        int closestPointH1 = 0;
+        int closestPointH2 = 0;
+        int closestPointA1 = 0;
+        int closestPointA2 = 0;
+
+        for (int p_j = 0; p_j < 2; ++p_j)
+        {
+            bool h_i = p_j == 0;
+
+            for (int p_i = 0; p_i < 4; ++p_i)
+            {
+                for(int i = 0; i < 4; ++i)
+                {
+                    if(Vector2.Distance(h.p[h_i ? closestPointH1 : closestPointH2], p[h_i ? closestPointA1 : closestPointA2]) > Vector2.Distance(h.p[p_i], p[i]))
+                    {
+                        if(h_i)
+                        {
+                            closestPointH1 = p_i;
+                            closestPointA1 = i;
+                        }
+                        else
+                        {
+                            closestPointH2 = p_i;
+                            closestPointA2 = i;
+                        }
+                    }
+                }
+            }
+        }
+
+        Vector2 average0 = (h.p[closestPointH1] + p[closestPointA1]) / 2;
+        Vector2 average1 = (h.p[closestPointH2] + p[closestPointA2]) / 2;
+
+        i0 = closestPointA1;
+        i1 = closestPointA2;
+        avg0 = average0;
+        avg1 = average1;
+    }
+
+    public void JoinHousePoints()
+    {
+        if(i0 != -1)
+            p[i0] = avg0;
+        if (i1 != -1)
+            p[i1] = avg1;
+    }
+
+    public void CalculateCheckPoints(float checkDist)
+    {
+        Vector2 dir = MathUtility.Perpendicular(p[1] - p[0], m_leftSideHouse).normalized;
+        m_checkPoint1 = (p[0] + p[1]) / 2.0f + dir * checkDist;
+        m_checkPoint2 = (p[2] + p[3]) / 2.0f - dir * checkDist;
+    }
 
     public bool CheckHouseIntersection(House house)
     {
-        return  MathUtility.PointInQuad(house.p1, p1, p2, p3, p4) ||
-                MathUtility.PointInQuad(house.p2, p1, p2, p3, p4) ||
-                MathUtility.PointInQuad(house.p3, p1, p2, p3, p4) ||
-                MathUtility.PointInQuad(house.p4, p1, p2, p3, p4);
+        return  MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
+                MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
+                MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
+                MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]);
     }
 
     public bool CheckRoadIntersection(Road road)
     {
-        return  MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p1, p2) ||
-                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p2, p3) ||
-                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p3, p4) ||
-                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p4, p1);
+        return  MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p[0], p[1]) ||
+                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p[1], p[2]) ||
+                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p[2], p[3]) ||
+                MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p[3], p[0]);
     }
 
     public bool CheckEdgeIntersection(List<Road> edges)
@@ -70,12 +146,14 @@ public class Node
     public List<House> m_houses = new List<House>();
 
     public void FillChildren(int maxDepth)
-    { 
+    {
         if (m_depth >= maxDepth)
             return;
 
         FillSide(true);
         FillSide(false);
+
+        RemoveLowestBuildings(m_generator.m_branchChildren);
 
         foreach (Node c in m_children)
             c.FillChildren(maxDepth);
@@ -181,7 +259,7 @@ public class Node
                     // TODO Add value based on lower longest road length
                     c.m_totalValue = m_houses.Count + totalRoadLength;
 
-                    if (c.m_totalValue > m_currentHighestValue || m_depth == 1)
+                    if (c.m_totalValue > m_currentHighestValue)
                     {
                         m_currentHighestValue = c.m_totalValue;
                         m_children.Add(c);
@@ -191,13 +269,29 @@ public class Node
         }
     }
 
+    private void RemoveLowestBuildings(int keepCount)
+    {
+        while(m_children.Count > keepCount)
+        {
+            int lowestI = 0;
+
+            for(int i = 0; i < m_children.Count; ++i)
+            {
+                if (m_children[i].m_totalValue < m_children[lowestI].m_totalValue)
+                    lowestI = i;
+            }
+
+            m_children.RemoveAt(lowestI);
+        }
+    }
+
     public void FillBuildings()
     {
         m_houses.Clear();
 
         float startOffset = m_generator.m_houseHeight + m_generator.m_houseOffset * 2;
 
-        for (int j = 1; j < m_roads.Count; ++j)
+        for (int j = 0; j < m_roads.Count; ++j)
         {
             Road r = m_roads[j];
 
@@ -208,6 +302,9 @@ public class Node
 
             for (int dir = 0; dir < 2; ++dir)
             {
+                if (j == 0 && m_generator.m_perpDirLeft == (dir == 0))
+                    continue;
+
                 ver *= dir == 0 ? 1 : -1;
 
                 for (int i = 0; i < segments; ++i)
@@ -216,10 +313,12 @@ public class Node
 
                     House house = new House();
 
-                    house.p1 = start + ver * m_generator.m_houseOffset;
-                    house.p2 = house.p1 + ver * m_generator.m_houseHeight;
-                    house.p3 = house.p2 + hor * m_generator.m_houseWidth;
-                    house.p4 = house.p1 + hor * m_generator.m_houseWidth;
+                    house.m_leftSideHouse = dir == 0;
+
+                    house.p[0] = start + ver * m_generator.m_houseOffset;
+                    house.p[1] = house.p[0] + ver * m_generator.m_houseHeight;
+                    house.p[2] = house.p[1] + hor * m_generator.m_houseWidth;
+                    house.p[3] = house.p[0] + hor * m_generator.m_houseWidth;
 
                     bool valid = true;
 
@@ -236,6 +335,61 @@ public class Node
                         m_houses.Add(house);
                 }
             }
+        }
+
+        ClassifyHouses();
+    }
+
+    private void ClassifyHouses()
+    {
+        for (int i = 0; i < m_houses.Count; ++i)
+        {
+            m_houses[i].CalculateCheckPoints(m_generator.m_houseOffset + (m_generator.m_houseWidth / 2.0f));
+
+            ClassifyHouse(m_houses[i], i);
+        }
+
+        for(int i = 0; i < m_houses.Count; ++i)
+        {
+            JoinHouse(m_houses[i]);
+        }
+
+        for (int i = 0; i < m_houses.Count; ++i)
+        {
+            m_houses[i].JoinHousePoints();
+        }
+    }
+
+    private void ClassifyHouse(House house, int index)
+    {
+        int attachedSides = 0;
+
+        for (int i = 0; i < m_houses.Count; ++i)
+        {
+            if (i == index) continue;
+
+            House h = m_houses[i];
+
+            if (MathUtility.PointInQuad(house.m_checkPoint1, h.p[0], h.p[1], h.p[2], h.p[3]) ||
+                MathUtility.PointInQuad(house.m_checkPoint2, h.p[0], h.p[1], h.p[2], h.p[3]))
+            {
+                ++attachedSides;
+                house.m_adjacentHouses.Add(h);
+            }
+        }
+
+        house.m_housingType = (House.HouseType) attachedSides;
+    }
+
+    private void JoinHouse(House house)
+    {
+        while(house.m_adjacentHouses.Count > 0)
+        {
+            House adjacentHouse = house.m_adjacentHouses[house.m_adjacentHouses.Count - 1];
+
+            house.JoinHouse(adjacentHouse);
+
+            house.m_adjacentHouses.Remove(adjacentHouse);
         }
     }
 
@@ -283,6 +437,8 @@ public class Generator : MonoBehaviour
 
     public int m_maxDepth = 5;
     public Slider m_maxDepthSlider;
+
+    public int m_branchChildren = 1;
 
     public bool m_perpDirLeft = true;
 

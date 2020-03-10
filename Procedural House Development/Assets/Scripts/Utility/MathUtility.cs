@@ -149,6 +149,6 @@ public class MathUtility
 
 	public static bool PointInQuad(Vector2 pt, Vector2 v1, Vector2 v2, Vector2 v3, Vector2 v4)
 	{
-		return PointInTriangle(pt, v1, v2, v3) || PointInTriangle(pt, v2, v3, v4);
+		return PointInTriangle(pt, v1, v2, v3) || PointInTriangle(pt, v1, v3, v4);
 	}
 }
