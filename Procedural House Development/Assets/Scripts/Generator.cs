@@ -33,65 +33,37 @@ public class House
     public bool m_leftSideHouse;
     public Vector2[] p = new Vector2[4];
 
+    public Vector2 m_hor;
+    public float m_spacing;
+    public bool m_leftAttached = false;
+    public bool m_rightAttached = false;
+
     public Vector2 m_checkPoint1;
     public Vector2 m_checkPoint2;
-
-    public int i0 = -1;
-    public int i1 = -1;
-    public Vector2 avg0;
-    public Vector2 avg1;
 
     public HouseType m_housingType;
 
     public List<House> m_adjacentHouses = new List<House>();
 
-    public void JoinHouse(House h)
+    public void JoinHouse()
     {
-        int closestPointH1 = 0;
-        int closestPointH2 = 0;
-        int closestPointA1 = 0;
-        int closestPointA2 = 0;
-
-        for (int p_j = 0; p_j < 2; ++p_j)
+        if(!m_leftAttached)
         {
-            bool h_i = p_j == 0;
-
-            for (int p_i = 0; p_i < 4; ++p_i)
-            {
-                for(int i = 0; i < 4; ++i)
-                {
-                    if(Vector2.Distance(h.p[h_i ? closestPointH1 : closestPointH2], p[h_i ? closestPointA1 : closestPointA2]) > Vector2.Distance(h.p[p_i], p[i]))
-                    {
-                        if(h_i)
-                        {
-                            closestPointH1 = p_i;
-                            closestPointA1 = i;
-                        }
-                        else
-                        {
-                            closestPointH2 = p_i;
-                            closestPointA2 = i;
-                        }
-                    }
-                }
-            }
+            bool temp = m_rightAttached;
+            m_rightAttached = m_leftAttached;
+            m_leftAttached = temp;
         }
 
-        Vector2 average0 = (h.p[closestPointH1] + p[closestPointA1]) / 2;
-        Vector2 average1 = (h.p[closestPointH2] + p[closestPointA2]) / 2;
-
-        i0 = closestPointA1;
-        i1 = closestPointA2;
-        avg0 = average0;
-        avg1 = average1;
-    }
-
-    public void JoinHousePoints()
-    {
-        if(i0 != -1)
-            p[i0] = avg0;
-        if (i1 != -1)
-            p[i1] = avg1;
+        if(m_rightAttached)
+        {
+            p[0] -= m_hor * m_spacing;
+            p[1] -= m_hor * m_spacing;
+        }
+        if(m_leftAttached)
+        {
+            p[2] += m_hor * m_spacing;
+            p[3] += m_hor * m_spacing;
+        }
     }
 
     public void CalculateCheckPoints(float checkDist)
@@ -340,6 +312,9 @@ public class Node
                     house.p[2] = house.p[1] + hor * m_generator.m_houseWidth;
                     house.p[3] = house.p[0] + hor * m_generator.m_houseWidth;
 
+                    house.m_hor = hor;
+                    house.m_spacing = m_generator.m_houseOffset;
+
                     bool valid = true;
 
                     foreach (Road rTest in m_roads)
@@ -370,16 +345,9 @@ public class Node
             ClassifyHouse(m_houses[i], i);
         }
 
-        return;
-
-        for(int i = 0; i < m_houses.Count; ++i)
-        {
-            JoinHouse(m_houses[i]);
-        }
-
         for (int i = 0; i < m_houses.Count; ++i)
         {
-            m_houses[i].JoinHousePoints();
+            m_houses[i].JoinHouse();
         }
     }
 
@@ -393,27 +361,18 @@ public class Node
 
             House h = m_houses[i];
 
-            if (MathUtility.PointInQuad(house.m_checkPoint1, h.p[0], h.p[1], h.p[2], h.p[3]) ||
-                MathUtility.PointInQuad(house.m_checkPoint2, h.p[0], h.p[1], h.p[2], h.p[3]))
+            bool left = MathUtility.PointInQuad(house.m_checkPoint1, h.p[0], h.p[1], h.p[2], h.p[3]);
+            bool right = MathUtility.PointInQuad(house.m_checkPoint2, h.p[0], h.p[1], h.p[2], h.p[3]);
+
+            if (left || right)
             {
                 ++attachedSides;
-                house.m_adjacentHouses.Add(h);
+                house.m_leftAttached = left;
+                house.m_rightAttached = right;
             }
         }
 
         house.m_housingType = (House.HouseType) attachedSides;
-    }
-
-    private void JoinHouse(House house)
-    {
-        while(house.m_adjacentHouses.Count > 0)
-        {
-            House adjacentHouse = house.m_adjacentHouses[house.m_adjacentHouses.Count - 1];
-
-            house.JoinHouse(adjacentHouse);
-
-            house.m_adjacentHouses.Remove(adjacentHouse);
-        }
     }
 
     public Node GetMostValuableNode()

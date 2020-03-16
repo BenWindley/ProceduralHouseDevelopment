@@ -75,9 +75,14 @@ public class Manager : MonoBehaviour
     }
     private void Update()
     {
+#if UNITY_STANDALONE
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
-        if (Input.GetKeyDown(KeyCode.R))
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+#endif
+    }
+
+    public void Restart()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }
