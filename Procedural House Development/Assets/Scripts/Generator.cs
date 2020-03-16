@@ -104,9 +104,11 @@ public class House
     public bool CheckHouseIntersection(House house)
     {
         return  MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
-                MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
-                MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
-                MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]);
+                MathUtility.PointInQuad(house.p[1], p[0], p[1], p[2], p[3]) ||
+                MathUtility.PointInQuad(house.p[2], p[0], p[1], p[2], p[3]) ||
+                MathUtility.PointInQuad(house.p[3], p[0], p[1], p[2], p[3]) ||
+                MathUtility.LineSegmentLineSegmentIntersection(house.p[0], house.p[1], p[0],p[1]) ||
+                MathUtility.LineSegmentLineSegmentIntersection(house.p[2], house.p[3], p[2], p[3]);
     }
 
     public bool CheckRoadIntersection(Road road)
@@ -124,6 +126,24 @@ public class House
                 return true;
 
         return false;
+    }
+
+    public bool CheckInsideArea(List<Vector3> edges)
+    {
+        Vector2[] area = new Vector2[edges.Count];
+
+        for (int i = 0; i < edges.Count; ++i)
+        {
+            area[i] = edges[i];
+        }
+
+        foreach (Vector2 point in p)
+        {
+            if (!MathUtility.PointInPolygon(area, point))
+                return false;
+        }
+
+        return true;
     }
 }
 
@@ -302,7 +322,7 @@ public class Node
 
             for (int dir = 0; dir < 2; ++dir)
             {
-                if (j == 0 && m_generator.m_perpDirLeft == (dir == 0))
+                if (j == 0 && dir == 0)
                     continue;
 
                 ver *= dir == 0 ? 1 : -1;
@@ -328,8 +348,9 @@ public class Node
                     foreach (House hTest in m_houses)
                         if (house.CheckHouseIntersection(hTest))
                             valid = false;
-                    if (house.CheckEdgeIntersection(m_edges))
+                    if (!house.CheckInsideArea(m_generator.m_manager.m_edges))
                         valid = false;
+
 
                     if (valid)
                         m_houses.Add(house);
@@ -348,6 +369,8 @@ public class Node
 
             ClassifyHouse(m_houses[i], i);
         }
+
+        return;
 
         for(int i = 0; i < m_houses.Count; ++i)
         {
@@ -422,7 +445,7 @@ public class Node
 
 public class Generator : MonoBehaviour
 {
-    private Manager m_manager;
+    public Manager m_manager;
     public RoadVisualiser m_roadVisualiser;
 
     // Buffer between the edges of the main road, between 0 for no buffer and 0.5 for only center
@@ -485,6 +508,7 @@ public class Generator : MonoBehaviour
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
         m_roadVisualiser.m_houses.AddRange(longest.m_houses.ToArray());
         m_roadVisualiser.GenerateRoads();
+        m_manager.m_stats.InitStats(longest.m_houses, longest.m_roads);
         m_manager.NextSection();
     }
 

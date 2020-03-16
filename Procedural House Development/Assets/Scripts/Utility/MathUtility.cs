@@ -151,4 +151,18 @@ public class MathUtility
 	{
 		return PointInTriangle(pt, v1, v2, v3) || PointInTriangle(pt, v1, v3, v4);
 	}
+
+	public static bool PointInPolygon(Vector2[] polygon, Vector2 point)
+	{
+		bool isInside = false;
+		for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+		{
+			if (((polygon[i].y > point.y) != (polygon[j].y > point.y)) &&
+			(point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x))
+			{
+				isInside = !isInside;
+			}
+		}
+		return isInside;
+	}
 }
