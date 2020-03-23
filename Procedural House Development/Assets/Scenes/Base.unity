@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3483,7 +3483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9c37be3fd71d3a488e9325e1eb6e55b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_manager: {fileID: 0}
+  m_manager: {fileID: 1230572826}
   m_roadVisualiser: {fileID: 1736968940}
   m_mainRoadIndex: 0
   m_houseWidthSlider: {fileID: 1860966220}
@@ -3493,7 +3493,7 @@ MonoBehaviour:
   m_houseOffset: 0.1
   m_maxDepth: 0
   m_maxDepthSlider: {fileID: 395903288}
-  m_branchChildren: 2
+  m_branchChildren: 1
   m_perpDirLeft: 1
 --- !u!4 &1149444068
 Transform:

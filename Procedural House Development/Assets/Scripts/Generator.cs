@@ -45,7 +45,7 @@ public class House
 
     public List<House> m_adjacentHouses = new List<House>();
 
-    public void JoinHouse()
+    public void JoinHouse(List<Vector3> edges)
     {
         if(!m_leftAttached)
         {
@@ -57,12 +57,20 @@ public class House
         if(m_rightAttached)
         {
             p[0] -= m_hor * m_spacing;
+            if (!CheckInsideArea(edges))
+                p[0] += m_hor * m_spacing;
             p[1] -= m_hor * m_spacing;
+            if (!CheckInsideArea(edges))
+                p[1] += m_hor * m_spacing;
         }
-        if(m_leftAttached)
+        if (m_leftAttached)
         {
             p[2] += m_hor * m_spacing;
+            if (!CheckInsideArea(edges))
+                p[2] -= m_hor * m_spacing;
             p[3] += m_hor * m_spacing;
+            if (!CheckInsideArea(edges))
+                p[3] -= m_hor * m_spacing;
         }
     }
 
@@ -102,16 +110,9 @@ public class House
 
     public bool CheckInsideArea(List<Vector3> edges)
     {
-        Vector2[] area = new Vector2[edges.Count];
-
-        for (int i = 0; i < edges.Count; ++i)
-        {
-            area[i] = edges[i];
-        }
-
         foreach (Vector2 point in p)
         {
-            if (!MathUtility.PointInPolygon(area, point))
+            if (!MathUtility.PointInPolygon(edges.ToArray(), point))
                 return false;
         }
 
@@ -125,7 +126,6 @@ public class Node
     public Generator m_generator;
 
     public bool m_left = true;
-    private float m_currentHighestValue = 0.0f;
     public float m_totalValue = 0.0f;
     public int m_depth = 0;
 
@@ -157,7 +157,7 @@ public class Node
 
         for (int pi = 0; pi < m_roads.Count; ++pi)
         {
-            if (m_depth > 0 && pi == 0) continue;
+            //if (m_depth > 0 && pi == 0) continue;
 
             // Current parent road
             Road p = m_roads[pi];
@@ -183,7 +183,7 @@ public class Node
                     start, end, o.m_start, o.m_end, out tempEnd))
                     {
                         end = tempEnd;
-                        end -= Vector2.one * dir * (Vector2.Distance(start, end) % roadIntervals);
+                        //end -= Vector2.one * dir * (Vector2.Distance(start, end) % roadIntervals);
 
                         clear = true;
                     }
@@ -204,8 +204,6 @@ public class Node
                     start, end, o.m_start, o.m_end, out tempEnd))
                     {
                         end = tempEnd;
-
-                        clear = true;
                     }
                 }
 
@@ -218,9 +216,9 @@ public class Node
 
                     // Invalid if both roads have the same start point
                     if ((Vector2.one * o.m_start == start &&
-                         Vector2.one * o.m_end == end   ) ||
+                         Vector2.one * o.m_end == end) ||
                         (Vector2.one * o.m_start == end &&
-                         Vector2.one * o.m_end == start   ))
+                         Vector2.one * o.m_end == start))
                     {
                         clear = false;
                     }
@@ -228,8 +226,13 @@ public class Node
                     // Invalid if line is inside another line
                     if (MathUtility.PointOnLineSegment(o.m_start, o.m_end, start) &&
                         MathUtility.PointOnLineSegment(o.m_start, o.m_end, end))
-                        clear = false;
+                    {
+                        //clear = false;
+                    }
                 }
+
+                if (!MathUtility.PointInPolygon(m_generator.m_manager.m_edges.ToArray(), (end + start) / 2.0f))
+                    clear = false;
 
                 if (clear && Vector2.Distance(start, end) > roadIntervals)
                 {
@@ -248,14 +251,10 @@ public class Node
                     foreach (Road rl in c.m_roads)
                         totalRoadLength += rl.Length();
 
-                    // TODO Add value based on lower longest road length
                     c.m_totalValue = m_houses.Count + totalRoadLength;
 
-                    if (c.m_totalValue > m_currentHighestValue)
-                    {
-                        m_currentHighestValue = c.m_totalValue;
+                    if(c.m_totalValue > m_totalValue)
                         m_children.Add(c);
-                    }
                 }
             }
         }
@@ -326,7 +325,6 @@ public class Node
                     if (!house.CheckInsideArea(m_generator.m_manager.m_edges))
                         valid = false;
 
-
                     if (valid)
                         m_houses.Add(house);
                 }
@@ -347,7 +345,7 @@ public class Node
 
         for (int i = 0; i < m_houses.Count; ++i)
         {
-            m_houses[i].JoinHouse();
+            m_houses[i].JoinHouse(m_generator.m_manager.m_edges);
         }
     }
 
@@ -406,8 +404,6 @@ public class Generator : MonoBehaviour
 {
     public Manager m_manager;
     public RoadVisualiser m_roadVisualiser;
-
-    // Buffer between the edges of the main road, between 0 for no buffer and 0.5 for only center
 
     public int m_mainRoadIndex;
 
