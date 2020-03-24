@@ -47,14 +47,16 @@ public class House
 
     public void JoinHouse(List<Vector3> edges)
     {
-        if(!m_leftAttached)
-        {
-            bool temp = m_rightAttached;
-            m_rightAttached = m_leftAttached;
-            m_leftAttached = temp;
-        }
+        //return;
 
-        if(m_rightAttached)
+        //if(!m_leftAttached)
+        //{
+        //    bool temp = m_rightAttached;
+        //    m_rightAttached = m_leftAttached;
+        //    m_leftAttached = temp;
+        //}
+
+        if(m_leftAttached)
         {
             p[0] -= m_hor * m_spacing;
             if (!CheckInsideArea(edges))
@@ -63,7 +65,8 @@ public class House
             if (!CheckInsideArea(edges))
                 p[1] += m_hor * m_spacing;
         }
-        if (m_leftAttached)
+
+        if (m_rightAttached)
         {
             p[2] += m_hor * m_spacing;
             if (!CheckInsideArea(edges))
@@ -312,7 +315,7 @@ public class Node
                     house.p[3] = house.p[0] + hor * m_generator.m_houseWidth;
 
                     house.m_hor = hor;
-                    house.m_spacing = m_generator.m_houseOffset;
+                    house.m_spacing = m_generator.m_houseOffset / 2.0f;
 
                     bool valid = true;
 
@@ -359,14 +362,16 @@ public class Node
 
             House h = m_houses[i];
 
+            if (h.m_hor != house.m_hor) continue;
+
             bool left = MathUtility.PointInQuad(house.m_checkPoint1, h.p[0], h.p[1], h.p[2], h.p[3]);
             bool right = MathUtility.PointInQuad(house.m_checkPoint2, h.p[0], h.p[1], h.p[2], h.p[3]);
 
             if (left || right)
             {
                 ++attachedSides;
-                house.m_leftAttached = left;
-                house.m_rightAttached = right;
+                house.m_leftAttached |= left;
+                house.m_rightAttached |= right;
             }
         }
 

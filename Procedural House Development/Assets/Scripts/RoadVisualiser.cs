@@ -41,21 +41,25 @@ public class RoadVisualiser : MonoBehaviour
             gr.SetPosition(2, h.p[2]);
             gr.SetPosition(3, h.p[3]);
 
-            switch (h.m_housingType)
-            {
-                case House.HouseType.Detatched:
-                    gr.startColor = new Color(0, 1, 1);
-                    gr.endColor = new Color(0, 1, 1);
-                    break;
-                case House.HouseType.SemiDetatched:
-                    gr.startColor = new Color(.5f, 1, 1);
-                    gr.endColor = new Color(.5f, 1, 1);
-                    break;
-                case House.HouseType.Terraced:
-                    gr.startColor = new Color(1, 1, 1);
-                    gr.endColor = new Color(1, 1, 1);
-                    break;
-            }
+            //switch (h.m_housingType)
+            //{
+            //    case House.HouseType.Detatched:
+            //        gr.startColor = new Color(0, 1, 1);
+            //        gr.endColor = new Color(0, 1, 1);
+            //        break;
+            //    case House.HouseType.SemiDetatched:
+            //        gr.startColor = new Color(.5f, 1, 1);
+            //        gr.endColor = new Color(.5f, 1, 1);
+            //        break;
+            //    case House.HouseType.Terraced:
+            //        gr.startColor = new Color(1, 1, 1);
+            //        gr.endColor = new Color(1, 1, 1);
+            //        break;
+            //    default:
+            //        gr.startColor = new Color(1, 1, 1);
+            //        gr.endColor = new Color(1, 1, 1);
+            //        break;
+            //}
         }
     }
 

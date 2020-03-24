@@ -2433,6 +2433,7 @@ GameObject:
   m_Component:
   - component: {fileID: 803608869}
   - component: {fileID: 803608870}
+  - component: {fileID: 803608871}
   m_Layer: 5
   m_Name: Change Height
   m_TagString: Untagged
@@ -2511,9 +2512,33 @@ MonoBehaviour:
   m_Value: 0.3
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 803608871}
+        m_MethodName: Round
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 803608870}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &803608871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803608868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69aef051373e16244bee91aeda3c9129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_decimalPlaces: 1
 --- !u!1 &810325114
 GameObject:
   m_ObjectHideFlags: 0
@@ -5549,6 +5574,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1860966219}
   - component: {fileID: 1860966220}
+  - component: {fileID: 1860966221}
   m_Layer: 5
   m_Name: Change Width
   m_TagString: Untagged
@@ -5627,9 +5653,33 @@ MonoBehaviour:
   m_Value: 0.2
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1860966221}
+        m_MethodName: Round
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1860966220}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &1860966221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860966218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69aef051373e16244bee91aeda3c9129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_decimalPlaces: 1
 --- !u!1 &1876365252
 GameObject:
   m_ObjectHideFlags: 0
