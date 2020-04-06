@@ -12,6 +12,8 @@ public class Manager : MonoBehaviour
     public EdgeSelector m_edgeSelector;
     public Generator m_generator;
     public Stats m_stats;
+    public RoadVisualiser m_roadVisualiser;
+    public RoadHouseModifier m_roadHouseModifier;
 
     public PanelSlideIn m_generatorSettings;
 
@@ -53,6 +55,7 @@ public class Manager : MonoBehaviour
             case 3:
                 m_edgeSelector.m_line.enabled = false;
                 m_stats.GetComponent<PanelSlideIn>().m_enabled = true;
+                m_roadHouseModifier.Init(m_roadVisualiser);
 
                 m_prompt1.SetActive(false);
                 m_prompt2.SetActive(false);

@@ -10,7 +10,7 @@ public class Stats : MonoBehaviour
     public TextMeshProUGUI m_terraced;
     public TextMeshProUGUI m_road;
 
-    public void InitStats(List<House> houses, List<Road> roads)
+    public void Init(List<House> houses, List<Road> roads)
     {
         int detached = 0;
         int semiDetached = 0;

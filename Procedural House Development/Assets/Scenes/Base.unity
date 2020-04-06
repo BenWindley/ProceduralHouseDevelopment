@@ -605,6 +605,55 @@ MonoBehaviour:
   m_disabledPosition: {x: 0, y: 0, z: 0}
   m_enabledPosition: {x: 0, y: 0, z: 0}
   m_enabled: 0
+--- !u!1 &85036496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 85036498}
+  - component: {fileID: 85036497}
+  m_Layer: 0
+  m_Name: Road Modifier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &85036497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85036496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6524c7a77b9e80e4daeff5f2bccea6e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_houses: []
+  m_houseObjects: []
+  m_roads: []
+  m_roadObjects: []
+  m_selectedHouse: -1
+  m_selectedRoad: -1
+--- !u!4 &85036498
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85036496}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &193414837
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,7 +751,7 @@ RectTransform:
   - {fileID: 1730450301}
   - {fileID: 424556233}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3477,7 +3526,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1149444066
 GameObject:
@@ -3903,6 +3952,8 @@ MonoBehaviour:
   m_edgeSelector: {fileID: 1230572825}
   m_generator: {fileID: 1149444067}
   m_stats: {fileID: 1730450302}
+  m_roadVisualiser: {fileID: 1736968940}
+  m_roadHouseModifier: {fileID: 85036497}
   m_generatorSettings: {fileID: 60078788}
   m_currentStage: 0
   m_edges: []
@@ -5480,6 +5531,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_roads: []
   m_houses: []
+  m_roadObjects: []
+  m_houseObjects: []
   m_roadPrefab: {fileID: 5717841501045306367, guid: b231de06158aea246874943abee4dd2c,
     type: 3}
   m_housePrefab: {fileID: 5717841501045306367, guid: a27552af30df6464ea8966491188ba8f,

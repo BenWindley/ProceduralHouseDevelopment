@@ -6,6 +6,8 @@ public class RoadVisualiser : MonoBehaviour
 {
     public List<Road> m_roads = new List<Road>();
     public List<House> m_houses = new List<House>();
+    public List<GameObject> m_roadObjects = new List<GameObject>();
+    public List<GameObject> m_houseObjects = new List<GameObject>();
     public GameObject m_roadPrefab;
     public GameObject m_housePrefab;
 
@@ -15,7 +17,9 @@ public class RoadVisualiser : MonoBehaviour
             Destroy(transform.GetChild(i).gameObject);
 
         m_roads.Clear();
+        m_roadObjects.Clear();
         m_houses.Clear();
+        m_houseObjects.Clear();
     }
 
     public void GenerateRoads()
@@ -28,6 +32,8 @@ public class RoadVisualiser : MonoBehaviour
 
             gr.SetPosition(0, r.m_start);
             gr.SetPosition(1, r.m_end);
+
+            m_roadObjects.Add(g);
         }
 
         foreach(House h in m_houses)
@@ -41,34 +47,7 @@ public class RoadVisualiser : MonoBehaviour
             gr.SetPosition(2, h.p[2]);
             gr.SetPosition(3, h.p[3]);
 
-            //switch (h.m_housingType)
-            //{
-            //    case House.HouseType.Detatched:
-            //        gr.startColor = new Color(0, 1, 1);
-            //        gr.endColor = new Color(0, 1, 1);
-            //        break;
-            //    case House.HouseType.SemiDetatched:
-            //        gr.startColor = new Color(.5f, 1, 1);
-            //        gr.endColor = new Color(.5f, 1, 1);
-            //        break;
-            //    case House.HouseType.Terraced:
-            //        gr.startColor = new Color(1, 1, 1);
-            //        gr.endColor = new Color(1, 1, 1);
-            //        break;
-            //    default:
-            //        gr.startColor = new Color(1, 1, 1);
-            //        gr.endColor = new Color(1, 1, 1);
-            //        break;
-            //}
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        foreach (House h in m_houses)
-        {
-            Gizmos.DrawCube(h.m_checkPoint1, Vector3.one * 0.1f);
-            Gizmos.DrawCube(h.m_checkPoint2, Vector3.one * 0.1f);
+            m_houseObjects.Add(g);
         }
     }
 }

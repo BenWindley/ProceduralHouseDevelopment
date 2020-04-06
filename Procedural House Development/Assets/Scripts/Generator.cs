@@ -254,7 +254,7 @@ public class Node
                     foreach (Road rl in c.m_roads)
                         totalRoadLength += rl.Length();
 
-                    c.m_totalValue = m_houses.Count + totalRoadLength;
+                    c.m_totalValue = m_houses.Count + totalRoadLength * 0.01f;
 
                     if(c.m_totalValue > m_totalValue)
                         m_children.Add(c);
@@ -283,10 +283,15 @@ public class Node
     {
         m_houses.Clear();
 
-        float startOffset = m_generator.m_houseHeight + m_generator.m_houseOffset * 2;
+        float startOffset;
 
         for (int j = 0; j < m_roads.Count; ++j)
         {
+            if (j == 0) 
+                startOffset = 0;
+            else
+                startOffset = m_generator.m_houseHeight + m_generator.m_houseOffset * 2;
+
             Road r = m_roads[j];
 
             int segments = Mathf.FloorToInt((r.Length() - startOffset) / (m_generator.m_houseWidth + m_generator.m_houseOffset));
@@ -468,7 +473,7 @@ public class Generator : MonoBehaviour
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
         m_roadVisualiser.m_houses.AddRange(longest.m_houses.ToArray());
         m_roadVisualiser.GenerateRoads();
-        m_manager.m_stats.InitStats(longest.m_houses, longest.m_roads);
+        m_manager.m_stats.Init(longest.m_houses, longest.m_roads);
         m_manager.NextSection();
     }
 
