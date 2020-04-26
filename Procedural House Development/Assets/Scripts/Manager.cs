@@ -29,6 +29,13 @@ public class Manager : MonoBehaviour
         switch(m_currentStage)
         {
             case 1:
+                m_drawer.enabled = true;
+                m_prompt1.SetActive(true);
+                m_prompt2.SetActive(false);
+                m_prompt3.SetActive(false);
+
+                break;
+            case 2:
                 m_drawer.enabled = false;
                 m_edgeSelector.enabled = true;
 
@@ -39,7 +46,7 @@ public class Manager : MonoBehaviour
                 m_prompt3.SetActive(false);
                 break;
 
-            case 2:
+            case 3:
                 m_edgeSelector.enabled = false;
                 m_generator.enabled = true;
 
@@ -52,7 +59,7 @@ public class Manager : MonoBehaviour
                 m_prompt3.SetActive(true);
                 break;
 
-            case 3:
+            case 4:
                 m_edgeSelector.m_line.enabled = false;
                 m_stats.GetComponent<PanelSlideIn>().m_enabled = true;
                 m_roadHouseModifier.Init(m_roadVisualiser);
@@ -71,8 +78,7 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
-        m_drawer.enabled = true;
-        m_prompt1.SetActive(true);
+        m_prompt1.SetActive(false);
         m_prompt2.SetActive(false);
         m_prompt3.SetActive(false);
     }
