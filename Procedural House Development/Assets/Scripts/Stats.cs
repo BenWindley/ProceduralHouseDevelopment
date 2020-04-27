@@ -40,6 +40,6 @@ public class Stats : MonoBehaviour
         m_detached.text = detached.ToString();
         m_semiDetached.text = semiDetached.ToString();
         m_terraced.text = terraced.ToString();
-        m_road.text = road.ToString("F1") + "m";
+        //m_road.text = road.ToString("F1") + "m";
     }
 }
