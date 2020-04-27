@@ -1,6 +1,6 @@
 {
 "companyName": "DefaultCompany",
-"productName": "Procedural House Development",
+"productName": "ProcHousing",
 "productVersion": "0.1",
 "dataUrl": "Build.data.unityweb",
 "wasmCodeUrl": "Build.wasm.code.unityweb",
