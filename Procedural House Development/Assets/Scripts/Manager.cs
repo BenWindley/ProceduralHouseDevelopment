@@ -7,6 +7,10 @@ public class Manager : MonoBehaviour
     public GameObject m_prompt1;
     public GameObject m_prompt2;
     public GameObject m_prompt3;
+    public GameObject m_loading;
+
+    public GameObject m_promptMove;
+    public GameObject m_promptZoom;
 
     public MapDrawer m_drawer;
     public EdgeSelector m_edgeSelector;
@@ -14,6 +18,7 @@ public class Manager : MonoBehaviour
     public Stats m_stats;
     public RoadVisualiser m_roadVisualiser;
     public RoadHouseModifier m_roadHouseModifier;
+    public CameraMovement m_movement;
 
     public PanelSlideIn m_generatorSettings;
 
@@ -29,12 +34,15 @@ public class Manager : MonoBehaviour
         switch(m_currentStage)
         {
             case 1:
+                m_movement.enabled = true;
                 m_drawer.enabled = true;
                 m_prompt1.SetActive(true);
                 m_prompt2.SetActive(false);
                 m_prompt3.SetActive(false);
-
+                m_promptMove.SetActive(true);
+                m_promptZoom.SetActive(true);
                 break;
+
             case 2:
                 m_drawer.enabled = false;
                 m_edgeSelector.enabled = true;
@@ -81,6 +89,10 @@ public class Manager : MonoBehaviour
         m_prompt1.SetActive(false);
         m_prompt2.SetActive(false);
         m_prompt3.SetActive(false);
+        m_loading.SetActive(false);
+        m_promptMove.SetActive(false);
+        m_promptZoom.SetActive(false);
+        m_movement.enabled = false;
     }
     private void Update()
     {

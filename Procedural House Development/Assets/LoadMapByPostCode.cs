@@ -7,12 +7,14 @@ using TMPro;
 public class LoadMapByPostCode : MonoBehaviour
 {
     private ForwardGeocodeResource m_resource;
+    public GameObject m_loading;
     public int m_totalTiles;
 
     public void GenerateMap(TMP_InputField location)
     {
         ForwardGeocodeResource resource = new ForwardGeocodeResource(location.text);
         Mapbox.Unity.MapboxAccess.Instance.Geocoder.Geocode(resource, LoadImage);
+        m_loading.SetActive(true);
     }
 
     public void LoadImage(ForwardGeocodeResponse data)
@@ -28,7 +30,10 @@ public class LoadMapByPostCode : MonoBehaviour
 
     public void FadeOverlays(Mapbox.Unity.MeshGeneration.Data.UnityTile tile)
     {
-        if(--m_totalTiles == 0)
+        if (--m_totalTiles == 0)
+        {
+            m_loading.SetActive(false);
             FindObjectOfType<FadeMaterial>().m_target = 0;
+        }
     }
 }
