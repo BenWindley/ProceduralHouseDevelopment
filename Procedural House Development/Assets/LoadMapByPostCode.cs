@@ -10,6 +10,7 @@ public class LoadMapByPostCode : MonoBehaviour
     public GameObject m_loading;
     public int m_totalTiles;
 
+    // Called via text input complete
     public void GenerateMap(TMP_InputField location)
     {
         ForwardGeocodeResource resource = new ForwardGeocodeResource(location.text);
@@ -17,6 +18,7 @@ public class LoadMapByPostCode : MonoBehaviour
         m_loading.SetActive(true);
     }
 
+    // Loads the map, called via coroutine
     public void LoadImage(ForwardGeocodeResponse data)
     {
         var abstractMap = GetComponent<Mapbox.Unity.Map.AbstractMap>();
@@ -28,6 +30,7 @@ public class LoadMapByPostCode : MonoBehaviour
         abstractMap.Initialize(data.Features[0].Center, 18);
     }
 
+    // Fades the grid-map
     public void FadeOverlays(Mapbox.Unity.MeshGeneration.Data.UnityTile tile)
     {
         if (--m_totalTiles == 0)

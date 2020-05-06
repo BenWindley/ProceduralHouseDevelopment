@@ -10,6 +10,7 @@ public class Stats : MonoBehaviour
     public TextMeshProUGUI m_terraced;
     public TextMeshProUGUI m_road;
 
+    // Counts the number of houses and adds the information to the stat window
     public void Init(List<House> houses, List<Road> roads)
     {
         int detached = 0;

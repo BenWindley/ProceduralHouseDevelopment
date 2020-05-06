@@ -27,6 +27,7 @@ public class Manager : MonoBehaviour
     public List<Vector3> m_edges;
     public List<Vector3> m_mainRoad;
 
+    // Advances the process
     public void NextSection()
     {
         m_currentStage++;

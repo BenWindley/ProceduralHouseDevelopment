@@ -45,6 +45,7 @@ public class House
 
     public List<House> m_adjacentHouses = new List<House>();
 
+    // Moves the edges of the house if terraced or semi-detatched
     public void JoinHouse(List<Vector3> edges)
     {
         //return;
@@ -77,6 +78,7 @@ public class House
         }
     }
 
+    // Creates the check points on each side of the house
     public void CalculateCheckPoints(float checkDist)
     {
         Vector2 dir = MathUtility.Perpendicular(p[1] - p[0], m_leftSideHouse).normalized;
@@ -84,6 +86,7 @@ public class House
         m_checkPoint2 = (p[2] + p[3]) / 2.0f - dir * checkDist;
     }
 
+    // Checks if the house intersects with another house
     public bool CheckHouseIntersection(House house)
     {
         return  MathUtility.PointInQuad(house.p[0], p[0], p[1], p[2], p[3]) ||
@@ -94,6 +97,7 @@ public class House
                 MathUtility.LineSegmentLineSegmentIntersection(house.p[2], house.p[3], p[2], p[3]);
     }
 
+    // Checks if the house intersects with a road
     public bool CheckRoadIntersection(Road road)
     {
         return  MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p[0], p[1]) ||
@@ -102,6 +106,8 @@ public class House
                 MathUtility.LineSegmentLineSegmentIntersection(road.m_start, road.m_end, p[3], p[0]);
     }
 
+    // Checks if the house intersects with the boundary edge
+    // No longer used
     public bool CheckEdgeIntersection(List<Road> edges)
     {
         foreach (Road r in edges)
@@ -111,6 +117,7 @@ public class House
         return false;
     }
 
+    // Checks if the house is inside the boundary area
     public bool CheckInsideArea(List<Vector3> edges)
     {
         foreach (Vector2 point in p)
@@ -140,6 +147,7 @@ public class Node
 
     public List<House> m_houses = new List<House>();
 
+    // Adds new roads to each child
     public void FillChildren(int maxDepth)
     {
         if (m_depth >= maxDepth)
@@ -154,6 +162,7 @@ public class Node
             c.FillChildren(maxDepth);
     }
 
+    // Adds a valid road as a new child
     private void FillSide(bool left = true)
     {
         float roadIntervals = m_generator.m_houseHeight * 2 + m_generator.m_houseOffset * 3;
@@ -179,13 +188,14 @@ public class Node
 
                 bool clear = false;
 
-                // Check proposed road again edges
+                // Check proposed road against edges
                 foreach (Road o in m_edges)
                 {
                     if (MathUtility.LineSegmentLineSegmentIntersection(
                     start, end, o.m_start, o.m_end, out tempEnd))
                     {
                         end = tempEnd;
+                        // Removes excess road that won't be required for the end house
                         //end -= Vector2.one * dir * (Vector2.Distance(start, end) % roadIntervals);
 
                         clear = true;
@@ -263,6 +273,7 @@ public class Node
         }
     }
 
+    // Removes the child that has the lowest value
     private void RemoveLowestBuildings(int keepCount)
     {
         while(m_children.Count > keepCount)
@@ -279,6 +290,7 @@ public class Node
         }
     }
 
+    // Adds valid buildings to each road
     public void FillBuildings()
     {
         m_houses.Clear();
@@ -342,6 +354,7 @@ public class Node
         ClassifyHouses();
     }
 
+    // Goes through each house and classifies them
     private void ClassifyHouses()
     {
         for (int i = 0; i < m_houses.Count; ++i)
@@ -357,6 +370,7 @@ public class Node
         }
     }
 
+    // Checks if a house is detatched, semi-detatched, or terraced
     private void ClassifyHouse(House house, int index)
     {
         int attachedSides = 0;
@@ -383,6 +397,7 @@ public class Node
         house.m_housingType = (House.HouseType) attachedSides;
     }
 
+    // Recursive search through node children to get highest value node
     public Node GetMostValuableNode()
     {
         Node mostValuable;
@@ -410,6 +425,9 @@ public class Node
     }
 }
 
+/// <summary>
+/// Creates the road network and fills it with houses
+/// </summary>
 public class Generator : MonoBehaviour
 {
     public Manager m_manager;
@@ -435,6 +453,11 @@ public class Generator : MonoBehaviour
         m_manager = Camera.main.GetComponent<Manager>();
     }
 
+    /// <summary>
+    /// Called on button press in UI.
+    /// 
+    /// Starts the recursive search.
+    /// </summary>
     public void Generate()
     {
         m_houseWidth = m_houseWidthSlider.value;
@@ -445,6 +468,7 @@ public class Generator : MonoBehaviour
         m_roadVisualiser.Clear();
         Node initialNode = new Node();
 
+        // Create list of edges
         List<Road> avoid = new List<Road>();
 
         for (int i = 0; i < m_manager.m_edges.Count; ++i)
@@ -453,6 +477,7 @@ public class Generator : MonoBehaviour
                 avoid.Add(new Road(m_manager.m_edges[i], m_manager.m_edges[(i + 1) % m_manager.m_edges.Count]));
         }
 
+        // Check if map edges were created clockwise
         m_perpDirLeft = CalculateDirectionOfPerpendicular(
             avoid, 
             Vector3.Lerp(m_manager.m_mainRoad[0], m_manager.m_mainRoad[1], 0.5f), 
@@ -467,8 +492,10 @@ public class Generator : MonoBehaviour
         initialNode.m_edges = avoid;
         initialNode.m_generator = this;
 
+        // Start recursive generation
         initialNode.FillChildren(m_maxDepth);
 
+        // Find longest node
         Node longest = initialNode.GetMostValuableNode();
         m_roadVisualiser.m_roads.AddRange(longest.m_roads.ToArray());
         m_roadVisualiser.m_houses.AddRange(longest.m_houses.ToArray());
